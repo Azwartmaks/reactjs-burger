@@ -4,6 +4,7 @@ import Burger from "../../components/Burger/Burger";
 import BuildControls from "../../components/Burger/BuildControls/BuildControls";
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
+import axios from "../../axios-orders";
 
 const INGREDIENT_PRICES = {
     salad: 0.5,
@@ -48,7 +49,7 @@ export default class BurgerBuilder extends Component {
         const oldPrice = this.state.totalPrice;
         const newPrice = oldPrice + priceAddition;
         this.setState({
-            totalPrice: newPrice,
+            totalPrice: (newPrice.toFixed(2) * 1),
             ingredients: updatedIngredients
         });
         this.updatePurchaseState(updatedIngredients);
@@ -68,7 +69,7 @@ export default class BurgerBuilder extends Component {
         const oldPrice = this.state.totalPrice;
         const newPrice = oldPrice - priceAddition;
         this.setState({
-            totalPrice: newPrice,
+            totalPrice: (newPrice.toFixed(2) * 1),
             ingredients: updatedIngredients
         });
         this.updatePurchaseState(updatedIngredients);
@@ -81,7 +82,29 @@ export default class BurgerBuilder extends Component {
         this.setState({purchasing: false})
     };
     purchaseContinueHandler = () => {
-        alert('You Continue');
+        // alert('You Continue');
+        const order = {
+            ingredients: this.state.ingredients,
+            price: this.state.totalPrice,
+            customer: {
+                name: 'Max Kul',
+                address: {
+                    street: 'New street',
+                    zipcode: '12321',
+                    country: 'UA'
+                },
+                email: 'test@test.com',
+            },
+            deliveryMethod: 'fastest',
+        };
+
+        axios.post('/order.json', order)
+            .then((response) => {
+                console.log(response)
+            })
+            .catch((error) => {
+                console.log(error)
+            });
     };
 
     render () {
